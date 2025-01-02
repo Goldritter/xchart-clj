@@ -1,6 +1,7 @@
 /target
 /classes
 /checkouts
+/.vscode
 /.clj-kondo
 /.calva
 /.lsp
