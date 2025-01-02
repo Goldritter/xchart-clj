@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>xchart-clj</groupId>
+  <groupId>com.github.goldritter</groupId>
   <artifactId>xchart-clj</artifactId>
   <packaging>jar</packaging>
   <version>0.1.0-SNAPSHOT</version>
@@ -10,11 +10,16 @@
   <url>http://example.com/FIXME</url>
   <licenses>
     <license>
-      <name>EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0</name>
-      <url>https://www.eclipse.org/legal/epl-2.0/</url>
+      <name>MIT</name>
+      <url>https://choosealicense.com/licenses/mit</url>
     </license>
   </licenses>
-  <scm/>
+  <scm>
+    <url>https://github.com/Goldritter/xchart-clj</url>
+    <connection>scm:git:git://github.com/Goldritter/xchart-clj.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/Goldritter/xchart-clj.git</developerConnection>
+    <tag>a8f6543e00bc5384c96f82aa7c5655188d0b41b1</tag>
+  </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
