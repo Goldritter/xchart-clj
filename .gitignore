@@ -1,0 +1,14 @@
+/target
+/classes
+/checkouts
+/.clj-kondo
+/.calva
+/.lsp
+*.jar
+*.svg
+*.class
+/.lein-*
+/.nrepl-port
+/.prepl-port
+.hgignore
+.hg/
