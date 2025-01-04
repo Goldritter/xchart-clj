@@ -1,6 +1,6 @@
 (defproject com.github.goldritter/xchart-clj "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "Clojure wrapper to use Xchart in a Highcharts manner."
+  :url "https://github.com/Goldritter/xchart-clj"
   :license {:name "MIT"
             :url "https://choosealicense.com/licenses/mit"
             :comment "MIT License"
@@ -8,7 +8,8 @@
             :key "mit"}
   :dependencies [[org.clojure/clojure "1.12.0"]
                  [org.knowm.xchart/xchart "3.8.8"]
-                 [commons-io/commons-io "2.18.0"]]
+                 [commons-io/commons-io "2.18.0"]
+                 [org.apache.commons/commons-math3 "3.6.1"]]
   :plugins [[lein-license "1.0.0"]]
   :main ^:skip-aot xchart-clj.core
   :target-path "target/%s"
