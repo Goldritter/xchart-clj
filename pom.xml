@@ -18,7 +18,7 @@
     <url>https://github.com/Goldritter/xchart-clj</url>
     <connection>scm:git:git://github.com/Goldritter/xchart-clj.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Goldritter/xchart-clj.git</developerConnection>
-    <tag>7a5ff81e9cd0290296fbc24ed902efd033d4f9dc</tag>
+    <tag>c41e5c5ae36308506487d1f695af7072e4f0ea4b</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
