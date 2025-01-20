@@ -4,6 +4,12 @@ Clojure wrapper for Xcharts inspired by Highcharts.
 
 Everything is work in progress even the documentation.
 
+## Usage
+
+### Leiningen
+
+![https://clojars.org/com.github.goldritter/kilithikadya](https://clojars.org/com.github.goldritter/xchart-clj/latest-version.svg)
+
 
 ## License
 
