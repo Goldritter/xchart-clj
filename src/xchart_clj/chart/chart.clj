@@ -4,6 +4,7 @@
             [xchart-clj.util.helper :refer :all])
   (:import
     (java.util Locale)
+    (chart ChartCreator)
     (org.knowm.xchart BoxChartBuilder BubbleChartBuilder CategoryChartBuilder DialChartBuilder HeatMapChartBuilder OHLCChartBuilder PieChartBuilder RadarChartBuilder XYChartBuilder)
     (org.knowm.xchart.style BoxStyler$BoxplotCalCulationMethod Styler$ChartTheme Styler$LegendPosition)))
 
@@ -243,3 +244,4 @@
     (adjust-axis chart (get used-chart-map "y-axis") "y-axis")
     (doall (map #(SERIES/add-series chart %) (get used-chart-map "series")))
     chart))
+

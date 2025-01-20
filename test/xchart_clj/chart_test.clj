@@ -64,4 +64,4 @@
 
 
 (defn generate-and-save-chart [chart-map type]
-  (save-chart-to-file (generate-chart chart-map) (get-in chart-map [:chart :title :name]) type))
+  (save-chart-to-file! (generate-chart chart-map) (get-in chart-map [:chart :title :name]) type))

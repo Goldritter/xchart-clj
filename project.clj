@@ -11,7 +11,6 @@
                  [commons-io/commons-io "2.18.0"]
                  [org.apache.commons/commons-math3 "3.6.1"]]
   :plugins [[lein-license "1.0.0"]]
-  :main ^:skip-aot xchart-clj.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
