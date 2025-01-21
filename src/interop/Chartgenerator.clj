@@ -1,8 +1,7 @@
 (ns interop.Chartgenerator
   (:require [xchart-clj.chart.chart :as c]
             [xchart-clj.chart.plot :as p])
-  (:import (chart ChartGenerator)
-           (java.io OutputStream)
+  (:import (java.io OutputStream)
            (java.util Map)
            (java.lang Integer)
            (org.knowm.xchart.internal.chartpart Chart))

@@ -1,4 +1,4 @@
-(defproject com.github.goldritter/xchart-clj "0.1.0.a-SNAPSHOT"
+(defproject com.github.goldritter/xchart-clj "0.1.0.b-SNAPSHOT"
   :description "Clojure wrapper to use Xchart in a Highcharts manner."
   :url "https://github.com/Goldritter/xchart-clj"
   :license {:name    "MIT"
