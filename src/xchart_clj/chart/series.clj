@@ -59,16 +59,16 @@
                                  (.setMarker series ((get series-map "marker" "none") series-marker))
                                  series)
              "y-axis-group"    (fn [series series-map]
-                                 (.setYAxisGroup series (series-map "y-axis-group"))
+                                 (.setYAxisGroup series (get series-map "y-axis-group"))
                                  series)
              "smooth?"         (fn [series series-map]
-                                 (.setSmooth series (series-map "smooth?" false))
+                                 (.setSmooth series (get series-map "smooth?" false))
                                  series)
              "show-in-legend?" (fn [series series-map]
-                                 (.setShowInLegend series (series-map "show-in-legend?" true))
+                                 (.setShowInLegend series (get series-map "show-in-legend?" true))
                                  series)
              "enabled?"        (fn [series series-map]
-                                 (.setEnabled series (series-map "enabled?" true))
+                                 (.setEnabled series (get series-map "enabled?" true))
                                  series)
              "line-widht"      (fn [series series-map]
                                  (.setLineWidth series (float (series-map "line-width" 1.0)))
