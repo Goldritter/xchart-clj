@@ -1,5 +1,6 @@
 (ns xchart-clj.chart.series
-  (:require [xchart-clj.util.helper :refer :all])
+  (:require [xchart-clj.util.helper :refer :all]
+            [clojure.reflect :as r])
   (:import
     (org.knowm.xchart BubbleSeries$BubbleSeriesRenderStyle CategorySeries$CategorySeriesRenderStyle OHLCSeries$OHLCSeriesRenderStyle PieSeries$PieSeriesRenderStyle XYSeries$XYSeriesRenderStyle)
     (org.knowm.xchart.style.lines SeriesLines)
@@ -49,8 +50,14 @@
                     "triangle-up"   SeriesMarkers/TRIANGLE_UP})
 
 (def series {"render-style"    (fn [series series-map]
-                                 (.setChartXYSeriesRenderStyle series
-                                                               (get-in series-render-styles ["org.knowm.xchart.style.XYStyler" (get series-map "render-style")]))
+                                 (cond
+                                   (= "org.knowm.xchart.CategoryChart" (.getName (class series)))
+                                   (.setChartCategorySeriesRenderStyle series
+                                                                       (get-in series-render-styles ["org.knowm.xchart.style.CategoryStyler" (get series-map "render-style")]))
+                                   (= "org.knowm.xchart.XYChart" (.getName (class series)))
+                                   (.setChartXYSeriesRenderStyle series
+                                                                 (get-in series-render-styles ["org.knowm.xchart.style.XYStyler" (get series-map "render-style")]))
+                                   )
                                  series)
              "label"           (fn [series series-map]
                                  (.setLabel series (get series-map "label"))
