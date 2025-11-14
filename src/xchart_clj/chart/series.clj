@@ -57,6 +57,18 @@
                                    (= "org.knowm.xchart.XYSeries" (.getName (class series)))
                                    (.setChartXYSeriesRenderStyle series
                                                                  (get-in series-render-styles ["org.knowm.xchart.style.XYStyler" (get series-map "render-style")]))
+
+                                   (= "org.knowm.xchart.PieSeries" (.getName (class series)))
+                                   (.setChartPieSeriesRenderStyle series
+                                                                 (get-in series-render-styles ["org.knowm.xchart.style.PieStyler" (get series-map "render-style")]))
+
+                                   (= "org.knowm.xchart.BubbleSeries" (.getName (class series)))
+                                   (.setBubbleSeriesRenderStyle series
+                                                                 (get-in series-render-styles ["org.knowm.xchart.style.BubbleStyler" (get series-map "render-style")]))
+
+                                   (= "org.knowm.xchart.OHLCSeries" (.getName (class series)))
+                                   (.setOhlcSeriesRenderStyle series
+                                                                 (get-in series-render-styles ["org.knowm.xchart.style.OHLCStyler" (get series-map "render-style")]))
                                    )
                                  series)
              "label"           (fn [series series-map]
@@ -77,7 +89,7 @@
              "enabled?"        (fn [series series-map]
                                  (.setEnabled series (get series-map "enabled?" true))
                                  series)
-             "line-widht"      (fn [series series-map]
+             "line-width"      (fn [series series-map]
                                  (.setLineWidth series (float (series-map "line-width" 1.0)))
                                  series)
              "line-style"      (fn [series series-map]
