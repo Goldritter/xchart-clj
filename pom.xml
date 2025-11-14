@@ -4,7 +4,7 @@
   <groupId>com.github.goldritter</groupId>
   <artifactId>xchart-clj</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.0.c-SNAPSHOT</version>
+  <version>0.1.0.d-SNAPSHOT</version>
   <name>xchart-clj</name>
   <description>Clojure wrapper to use Xchart in a Highcharts manner.</description>
   <url>https://github.com/Goldritter/xchart-clj</url>
@@ -18,7 +18,7 @@
     <url>https://github.com/Goldritter/xchart-clj</url>
     <connection>scm:git:git://github.com/Goldritter/xchart-clj.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Goldritter/xchart-clj.git</developerConnection>
-    <tag>39d4ceb87355fe71b8c23455bd7755dc0a042ac5</tag>
+    <tag>aeb7effc94a7b61c7e5f60fa353a6ed5d1677529</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>

@@ -51,10 +51,10 @@
 
 (def series {"render-style"    (fn [series series-map]
                                  (cond
-                                   (= "org.knowm.xchart.CategoryChart" (.getName (class series)))
+                                   (= "org.knowm.xchart.CategorySeries" (.getName (class series)))
                                    (.setChartCategorySeriesRenderStyle series
                                                                        (get-in series-render-styles ["org.knowm.xchart.style.CategoryStyler" (get series-map "render-style")]))
-                                   (= "org.knowm.xchart.XYChart" (.getName (class series)))
+                                   (= "org.knowm.xchart.XYSeries" (.getName (class series)))
                                    (.setChartXYSeriesRenderStyle series
                                                                  (get-in series-render-styles ["org.knowm.xchart.style.XYStyler" (get series-map "render-style")]))
                                    )
