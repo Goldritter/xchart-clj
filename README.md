@@ -145,6 +145,29 @@ The compiled Java class `interop.Chartgenerator` offers the following static met
 | `void saveToOutputStream(Chart chart, OutputStream os, String format)` | Saves the chart to an output stream. |
 | `void saveToFile(Chart chart, String filename, String format)` | Saves the chart to a file. |
 
+-----
+
+## 🛠️ To-Do List
+
+This section outlines planned features and missing implementations across various chart types and customization options:
+
+### 1\. General Functionality
+
+  * **Further Customization Options:** Implement remaining styling options available in the core XChart library that are not yet exposed via the configuration map (e.g., specific font family settings, padding, border visibility).
+  * **Documentation Expansion:** Provide detailed examples and documentation for all supported chart types beyond the basic XY chart (Category, Pie, Boxplot, etc.).
+
+### 2\. Chart Type Specific Options
+
+  * **Pie Chart Customization:** Add support for specific Pie chart styling options (e.g., setting start angle, inner/outer radius, slice separators).
+  * **Category Chart Options:** Expose more options for Category charts, such as bar width customization, and grouped/stacked bar options.
+  * **BoxPlot Calculation:** Ensure full support and clear documentation for all available `BoxStyler$BoxplotCalCulationMethod` options.
+  * **Dial/Radar/HeatMap Charts:** Integrate and document specific styling and configuration options unique to Dial, Radar, and Heat Map charts.
+
+### 3\. Series Customization
+
+  * **Complete Series Styling:** Add missing series-level styling options (e.g., marker size customization, data label visibility/formatting).
+
+-----
 
 ## License
 
