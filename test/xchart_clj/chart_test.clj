@@ -4,12 +4,14 @@
             [xchart-clj.chart.plot :refer :all])
   (:import (org.apache.commons.math3.distribution NormalDistribution GammaDistribution BinomialDistribution)))
 
-(def normal-disitributions {"μ: 0.5, σ: 0.1"  (new NormalDistribution 0.5 0.1 0.001)
+(def
+  ^{:doc "A map defining various Gaussian (Normal) distributions. 
+         These objects are used as data sources for generating sample data 
+         and density curves for the test charts."}
+  normal-disitributions {"μ: 0.5, σ: 0.1"  (new NormalDistribution 0.5 0.1 0.001)
                             "μ: 0.75, σ: 0.1" (new NormalDistribution 0.75 0.1 0.001)
                             "μ: 0.3, σ: 0.2"  (new NormalDistribution 0.3 0.2 0.001)})
-
-
-
+;;Configuration map for a 'Gaussian Density' XY Chart. Plots the Probability Density Function (PDF) of the defined normal distributions using smooth lines (spline interpolation).
 (def gaussian-density
   {:chart  {:title                       {:name "Gaussian Density"}
             :width                       800
@@ -38,7 +40,7 @@
              :show-in-legend? true
              :data            (doall (map #(vector %1 (.density %2 %1)) (range -0.5 1.5 0.001) (repeat (get normal-disitributions "μ: 0.75, σ: 0.1"))))}]})
 
-
+;; Configuration map for a 'Gaussian Boxplot' Chart. Generates a Boxplot visualizing the raw sampled data (1000 samples) for each of the defined normal distributions.
 (def gaussian-boxplot
   {:chart  {:title                       {:name "Gaussian Boxplot"}
             :width                       800
@@ -61,7 +63,8 @@
              :show-in-legend? true
              :data            (.sample (get normal-disitributions "μ: 0.75, σ: 0.1") 1000)}]})
 
-
-
-(defn generate-and-save-chart [chart-map type]
+(defn generate-and-save-chart 
+  "Generates an XChart object from the provided map and immediately saves it to a file. 
+  The filename is derived from the chart's title defined in the map."
+  [chart-map type]
   (save-chart-to-file! (generate-chart chart-map) (get-in chart-map [:chart :title :name]) type))
