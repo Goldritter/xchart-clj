@@ -132,7 +132,7 @@ The `xchart-clj.chart.plot` namespace provides functions for saving the generate
   (xp/get-svg-string chart))
 ```
 
-## 🌐 Interoperability (Java/Clojure)
+## 🌐 Java Interoperability (Advanced Usage)
 
 For Java projects that need to generate XChart diagrams using the declarative Clojure configuration, the `interop.Chartgenerator` namespace provides a static interface.
 
@@ -144,6 +144,82 @@ The compiled Java class `interop.Chartgenerator` offers the following static met
 | `String generateSvgString(Chart chart)` | Returns the chart as an SVG string. |
 | `void saveToOutputStream(Chart chart, OutputStream os, String format)` | Saves the chart to an output stream. |
 | `void saveToFile(Chart chart, String filename, String format)` | Saves the chart to a file. |
+
+
+**xchart-clj** is designed to be fully usable from Java applications. The core charting logic, implemented in Clojure, is automatically exposed to Java via a static helper class, eliminating the need to write complex Java configuration code.
+
+### 1\. Generating a Chart
+
+The compiled Clojure namespace `interop.Chartgenerator` is exposed as a static Java class, allowing you to generate an XChart object simply by passing a standard `java.util.Map` (which can be easily constructed from JSON or EDN data).
+
+#### Method Signature (Java)
+
+```java
+import java.util.Map;
+import org.knowm.xchart.internal.chartpart.Chart;
+import interop.Chartgenerator; // Your compiled Clojure bridge
+
+public class JavaDemo {
+    public static Chart<?, ?> createChart(Map<String, Object> configMap) {
+        // The Clojure logic translates the declarative map into a Chart object
+        return Chartgenerator.generateChart(configMap); 
+    }
+}
+```
+
+### 2\. Exporting and Saving
+
+The bridge class also provides direct methods to export the resulting `Chart` object.
+
+| Java Method Signature | Description |
+| :--- | :--- |
+| `String generateSvgString(Chart chart)` | Returns the chart as a SVG string. |
+| `void saveToOutputStream(Chart chart, OutputStream os, String format)` | Saves the chart to an output stream. |
+| `void saveToFile(Chart chart, String filename, String format)` | Saves the chart to a file (e.g., `"png"`, `"svg"`). |
+
+-----
+
+### 3\. Advanced Customization in Java (The Escape Hatch)
+
+One of the major advantages of **xchart-clj** being a wrapper around a Java library is the ability to use the raw **XChart Java API** for advanced customizations *after* the chart has been configured by Clojure.
+
+This is particularly useful when:
+
+1.  A specific customization option is **not yet implemented** in the Clojure configuration map (refer to the 🛠️ To-Do List).
+2.  You need access to complex, low-level XChart features (e.g., custom tooltips, specific event handlers) that the wrapper does not expose.
+
+The `generateChart` method returns the base XChart object (`org.knowm.xchart.internal.chartpart.Chart`). You can cast this object to its specific type (e.g., `XYChart`, `CategoryChart`) to access its full Java API.
+
+#### Example: Modifying the Chart Styler in Java
+
+Assume you need to set the `AxisTitlePadding` value, but the corresponding key is missing in the current `xchart-clj` implementation.
+
+```java
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.internal.chartpart.Chart;
+import interop.Chartgenerator;
+
+// Assuming this map was created and passed from JSON/Configuration
+Map<String, Object> basicConfig = ... ; 
+
+// 1. Generate the base chart using the Clojure configuration
+Chart<?, ?> rawChart = Chartgenerator.generateChart(basicConfig);
+
+// 2. Cast the chart object to its specific type (e.g., XYChart)
+//    and access the Styler via the Java API.
+if (rawChart instanceof XYChart) {
+    XYChart xyChart = (XYChart) rawChart;
+
+    // 3. Apply manual, low-level customization via XChart Java API
+    System.out.println("Applying manual Axis Title Padding via Java.");
+    xyChart.getStyler().setAxisTitlePadding(25); // Setzt den Abstand
+}
+
+// 4. Chart is now fully configured and can be exported
+Chartgenerator.saveToFile(rawChart, "customized_java_output.png", "png");
+```
+
+This pattern ensures that you always have an **"escape hatch"** to leverage the complete power of the underlying XChart library, even while primarily enjoying the simplicity of the Clojure map configuration.
 
 -----
 
