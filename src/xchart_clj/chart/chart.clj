@@ -194,12 +194,12 @@
 
                       "cursor-color"                     (fn [chart chart-map]
                                                            (-> (.getStyler chart)
-                                                               (.setCurserColor (get-in chart-map ["cursor-color"] "black")))
+                                                               (.setCursorColor (get-color (get-in chart-map ["cursor-color"] "black"))))
                                                            chart)
 
                       "cursor-line-width"                (fn [chart chart-map]
                                                            (-> (.getStyler chart)
-                                                               (.setCurserLineWidth (get-in chart-map ["cursor-line-width"] 10.0)))
+                                                               (.setCursorLineWidth (get-in chart-map ["cursor-line-width"] 10.0)))
                                                            chart)
 
                       })

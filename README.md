@@ -1,256 +1,205 @@
 # xchart-clj 📊
 
-**xchart-clj** is a **Clojure wrapper** for the powerful Java charting library [**XChart**](https://github.com/knowm/XChart). Inspired by the declarative configuration style of Highcharts, this wrapper allows you to easily create various chart types in Clojure by using **Clojure Maps for configuration**.
+**xchart-clj** is a declarative **Clojure wrapper** for the Java charting library [**XChart**](https://github.com/knowm/XChart). Inspired by the declarative configuration style of popular charting libraries like Highcharts, this wrapper enables you to build complex, highly customized charts using standard Clojure maps rather than imperative Java builders.
 
 ## ✨ Features
 
-  * **Declarative Configuration:** Create complex charts using simple Clojure maps, mirroring a pattern similar to Highcharts.
-  * **Broad Chart Support:** Supports all major XChart types (XY, Category, Pie, Bubble, Dial, Radar, OHLC, Boxplot, Heat Map).
-  * **Extensive Customization:** Access to styling options for axes, legends, titles, colors, and more.
-  * **Flexible Export:** Save charts as bitmap (PNG, GIF, BMP, JPG) or vector graphics (SVG, PDF, EPS).
+* **Declarative Configuration:** Describe your charts entirely using idiomatic Clojure maps (supports both keywords and string keys).
+* **Comprehensive Chart Types:** Fully supports XY, Category, Pie, Bubble, Dial, Radar, OHLC, Boxplot, and Heat Map charts.
+* **Advanced Series Styling:** Fine-grained control over line widths, styles, colors, markers, and multi-axis configurations (`y-axis-group`).
+* **Flexible Export:** Save charts directly to files, write to Java `OutputStream` objects, or generate native SVG strings.
 
 ## 🚀 Installation
 
-### Leiningen
+### Leiningen/Clojars
 
-![https://clojars.org/com.github.goldritter/xchart-clj](https://clojars.org/com.github.goldritter/xchart-clj/latest-version.svg)
+Add the following dependency to your `project.clj`:
+
+```clojure
+[com.github.goldritter/xchart-clj "LATEST_VERSION"]
+```
 
 ## 💡 Usage
 
-### 1\. Chart Generation
+### 1. Chart Generation
 
-The core of the library is the function `xchart-clj.chart.chart/generate-chart`, which expects a single Clojure map as an argument to describe the entire chart.
+The primary entry point is `xchart-clj.chart.chart/generate-chart`. It accepts a single configuration map. Because the library automatically normalizes keys, you can use either Clojure keywords or strings.
 
-Require the main namespaces in your project:
-
-```clojure
-(require '[xchart-clj.chart.chart :as xc]
-         '[xchart-clj.chart.plot :as xp])
-```
-
-The basic structure of the configuration map (using string keys as shown in your source code) looks like this:
+Require the core namespaces:
 
 ```clojure
-{"chart"  {"type" "xy"
-           "width" 800
-           "height" 600
-           "title" {"name" "My Chart Title"}}
- "x-axis" {"title" {"name" "X-Axis Label"}}
- "y-axis" {"title" {"name" "Y-Axis Label"}}
- "series" [{"name" "Series 1"
-            "data" [[1 10] [2 20] [3 30]]
-            "render-style" "line"}]}
+(ns my-app.core
+  (:require [xchart-clj.chart.chart :as xc]
+            [xchart-clj.chart.plot :as xp]))
 ```
 
-### 2\. Example: Simple XY Line Chart
+### 2. Example: Idiomatic XY Line Chart
 
-This example creates an **XY Line Chart** and saves it as a PNG file.
+Here is how to configure a smooth XY line chart with customized axis ranges, formatting, and theme styles, then export it as a PNG file:
 
 ```clojure
-(let [chart-map
-      {"chart" {"type" "xy"
-                "width" 800
-                "height" 600
-                "title" {"name" "Simple XY Chart"}
-                "theme" "ggplot-2"
-                "legend" {"position" "inside-ne"}}
-
-       "x-axis" {"title" {"name" "Data Points"}
-                 "min" 0
-                 "max" 5}
-
-       "y-axis" {"title" {"name" "Values"}
-                 "logarithmic?" false
-                 "decimal-pattern" "#0.00"}
-
-       "series" [{"name" "My Data Series"
-                  "data" [[1 10.5] [2 20.2] [3 30.1] [4 40.8] [5 50.0]]
-                  "render-style" "line"
-                  "marker" "circle"
-                  "line-color" "red"}]}
-
-      chart (xc/generate-chart chart-map)]
-  (xp/save-chart-to-file! chart "simple_xy_chart.png" :png))
+(let [chart-config
+      {:chart  {:type "xy"
+                :width 800
+                :height 600
+                :title {:name "Gaussian Distribution Density"}
+                :theme "ggplot-2"
+                :legend {:position "outside-s"}
+                :legend-font {:name "SansSerif" :style "bold" :size 12}
+                :plot-gridlines-color "lightGray"}
+       
+       :x-axis {:title {:name "Value"}
+                :min -0.4
+                :max 1.2
+                :label {:rotation 0}}
+       
+       :y-axis {:title {:name "Density"}
+                :decimal-pattern "#0.00"}
+       
+       :series [{:name "μ: 0.5, σ: 0.1"
+                 :smooth? true
+                 :show-in-legend true
+                 :line-color "red"
+                 :line-style "solid"
+                 :marker "circle"
+                 :data [[0.1 0.5] [0.3 1.2] [0.5 3.9] [0.7 1.2] [0.9 0.5]]}]}]
+  
+  (-> (xc/generate-chart chart-config)
+      (xp/save-chart-to-file! "gaussian_density.png" :png)))
 ```
 
-### 3\. Customization Options (Highlights)
+---
 
-The map structure mirrors the chart hierarchy. Settings are applied by functions found in the Clojure namespaces (e.g., `xchart-clj.chart.chart/chart-functions` and `xchart-clj.chart.axis/axis`).
+### 3. Configuration Reference
 
-#### Chart Settings (Key: `"chart"`)
-
-Controls general properties and styler settings.
+#### Chart Settings (Key: `:chart` or `"chart"`)
 
 | Key | Type | Description | Default |
 | :--- | :--- | :--- | :--- |
-| `"type"` | String | **Required.** Chart type (`"xy"`, `"category"`, `"pie"`, etc.). | - |
-| `"title"`, `"name"` | String | Main chart title. | - |
-| `"theme"` | String | Theme style (`"matlab"`, `"ggplot-2"`, `"x-chart"`). | `"matlab"` |
-| `"legend"`, `"position"` | String | Legend position (e.g., `"outside-e"`, `"inside-sw"`, see `xchart-clj.chart.chart/legend-position`). | `"outside-e"` |
-| `"plot-background-color"` | String/Color | Color of the plot background (e.g., `"black"` or hex code). | - |
-| `"tooltip?"` | Boolean | Enable tooltips. | `false` |
+| `:type` | String | **Required.** Type of chart (`"xy"`, `"category"`, `"pie"`, `"boxplot"`, etc.). | - |
+| `:width` / `:height` | Integer | Dimensions of the generated chart in pixels. | `600` / `800` |
+| `:title` | Map | Contains `:name` (String) and optionally `:visible?` (Boolean). | - |
+| `:theme` | String | Theme styles: `"matlab"`, `"ggplot-2"`, or `"x-chart"`. | `"matlab"` |
+| `:legend` | Map | Contains `:position` (`"outside-e"`, `"outside-s"`, `"inside-nw"`, etc.). | `"outside-e"` |
+| `:plot-background-color` | String/Vector | Color spec for the plot area (e.g., `"white"`, `"#FFFFFF"`, or `[255 255 255]`). | - |
+| `:chart-background-color`| String/Vector | Color spec for the outer chart background. | - |
+| `:plot-gridlines-color`  | String/Vector | Color of the major grid lines. | - |
+| `:plot-grid-lines-visible?`| Boolean | Toggle background grid lines visibility. | `true` |
+| `:axis-titles-visible?`  | Boolean | Toggle visibility of all axis titles. | `true` |
+| `:overlapped?`           | Boolean | Controls overlapping for category charts (bars/sticks). | `false` |
+| `:box-plot-calculation-method`| String | Method for boxplots: `"n-less-1"`, `"n-less-1-plus-1"`, `"n-plus-1"`, `"np"`. | `"default"` |
 
-#### Axis Settings (Keys: `"x-axis"` and `"y-axis"`)
+#### Axis Settings (Keys: `:x-axis` / `:y-axis` or `"x-axis"` / `"y-axis"`)
 
-Controls axis scaling and labels.
-
-| Axis | Key | Type | Description |
-| :--- | :--- | :--- | :--- |
-| `"x-axis"`/`"y-axis"`| `"title"`, `"name"` | String | Axis title. |
-| `"x-axis"`/`"y-axis"`| `"min"`, `"max"` | Double | Manual axis range (min/max). |
-| `"y-axis"` | `"logarithmic?"` | Boolean | Use a logarithmic Y-axis scale. | `false` |
-| `"x-axis"`/`"y-axis"`| `"label"`, `"alignment"` | String | Alignment of axis labels (`"right"`, `"centre"`, `"left"`). |
-
-#### Series Settings (Key: `"series"`)
-
-The `"series"` key takes a vector of maps, each defining a data series.
-
-| Key | Type | Description | Default |
-| :--- | :--- | :--- | :--- |
-| `"name"` | String | **Required.** Series name (used in the legend). | - |
-| `"data"` | Vector/List | **Required.** Data points (e.g., `[[x1 y1] [x2 y2] ...]`). | - |
-| `"render-style"` | String | Render style for this series (e.g., `"line"`, `"scatter"`, `"bar"`, `"area"`, see `xchart-clj.chart.series/series-render-styles`). | Chart default |
-| `"marker"` | String | Marker type for data points (e.g., `"circle"`, `"square"`, `"none"`, see `xchart-clj.chart.series/series-marker`). | `"none"` |
-| `"line-color"` | String/Color | Color of the line/area fill (e.g., `"blue"` or hex code). | - |
-| `"smooth?"` | Boolean | Render the line smoothly (spline). | `false` |
-
-### 4\. Data Export
-
-The `xchart-clj.chart.plot` namespace provides functions for saving the generated charts.
-
-| Function | Description | Format Keywords |
+| Key | Type | Description |
 | :--- | :--- | :--- |
-| `(xp/save-chart-to-file! chart file-name format)` | Saves the chart to a file. | `:png`, `:jpg`, `:svg`, `:pdf`, `:eps`, etc. |
-| `(xp/save-chart-to-output-stream! chart os format & {:keys [dpi]})`| Saves the chart to an Output Stream. | `:png`, `:jpg`, `:svg`, `:pdf`, `:eps`, etc. |
-| `(xp/get-svg-string chart)` | Returns the chart as a SVG string. | - |
-| `(xp/save-charts-to-file! charts file-name format rows cols)` | Saves multiple charts into a single file (bitmap only). | `:png`, `:jpg`, `:bmp`, `:gif` |
+| `:title` | Map | Contains `:name` (String) for the axis label text. |
+| `:min` / `:max` | Double | Manual boundary override for axis rendering. |
+| `:logarithmic?` | Boolean | *(Y-Axis only)* Toggle logarithmic scale. Defaults to `false`. |
+| `:decimal-pattern` | String | Custom formatting pattern (e.g., `"#,###.00"`). |
+| `:label` | Map | Contains `:rotation` (Integer in degrees) and `:alignment` (`"left"`, `"centre"`, `"right"`). |
+| `:axis-tick-padding` | Integer | Margin between ticks and tick labels. |
 
-**Example:** Getting the chart as an SVG string
+#### Series Settings (Key: `:series` or `"series"`)
+
+Pass a vector of maps. Each map configures an individual data series:
+
+| Key | Type | Description | Default |
+| :--- | :--- | :--- | :--- |
+| `:name` | String | **Required.** Name of the data series (appears in the legend). | - |
+| `:data` | Vector | **Required.** Collection of coordinates: `[[x1 y1] [x2 y2]]` or single values for boxplots. | - |
+| `:render-style` | String | Specific series override (`"line"`, `"scatter"`, `"bar"`, `"area"`, `"step"`, etc.). | Chart default |
+| `:line-style` | String | Line stroke type: `"solid"`, `"dash-dash"`, `"dash-dot"`, `"dot-dot"`, `"none"`. | `"solid"` |
+| `:line-width` | Float | Thickness of the series rendering line. | `1.0` |
+| `:line-color` | String/Vector | Color spec for the stroke. | - |
+| `:fill-color` | String/Vector | Color spec for area fills (supports RGBA vectors like `[0 150 255 100]` for transparency). | - |
+| `:marker` | String | Shape of data point markers (`"circle"`, `"cross"`, `"diamond"`, `"square"`, `"none"`). | `"none"` |
+| `:marker-color` | String/Vector | Color spec for data point markers. | - |
+| `:smooth?` | Boolean | Activates spline interpolation for smooth curves *(XY charts only)*. | `false` |
+| `:y-axis-group` | Integer | Binds the series to a specific Y-axis group index for multi-axis charts. | `0` |
+| `:show-in-legend?` | Boolean | Toggle entry visibility inside the legend box. | `true` |
+
+---
+
+## 4. Exporting Data
+
+The `xchart-clj.chart.plot` namespace handles chart serialization:
 
 ```clojure
-(let [chart ...] ;; Your chart object
-  (xp/get-svg-string chart))
+(require '[xchart-clj.chart.plot :as xp])
+
+;; Save a single chart to file
+(xp/save-chart-to-file! chart "output.png" :png)
+
+;; Save with custom DPI to an output stream
+(xp/save-chart-to-output-stream! chart my-os :jpg :dpi 300)
+
+;; Get raw SVG markup as string
+(let [svg-string (xp/get-svg-string chart)]
+  (println svg-string))
+
+;; Save a grid of multiple charts into a single image matrix
+(xp/save-charts-to-file! [chart1 chart2] "matrix.png" :png 2 1)
 ```
+
+---
 
 ## 🌐 Java Interoperability (Advanced Usage)
 
-For Java projects that need to generate XChart diagrams using the declarative Clojure configuration, the `interop.Chartgenerator` namespace provides a static interface.
+For polyglot applications running on the JVM, **xchart-clj** exposes a static Java interface via the compiled `interop.Chartgenerator` namespace. This allows Java applications to benefit from declarative map configurations (e.g., deserialized from JSON files) without writing extensive builder chains.
 
-The compiled Java class `interop.Chartgenerator` offers the following static methods:
-
-| Java Method Signature | Description |
-| :--- | :--- |
-| `Chart generateChart(Map chartMap)` | Creates a Chart object from a Java Map (e.g., converted from JSON or EDN). |
-| `String generateSvgString(Chart chart)` | Returns the chart as an SVG string. |
-| `void saveToOutputStream(Chart chart, OutputStream os, String format)` | Saves the chart to an output stream. |
-| `void saveToFile(Chart chart, String filename, String format)` | Saves the chart to a file. |
-
-
-**xchart-clj** is designed to be fully usable from Java applications. The core charting logic, implemented in Clojure, is automatically exposed to Java via a static helper class, eliminating the need to write complex Java configuration code.
-
-### 1\. Generating a Chart
-
-The compiled Clojure namespace `interop.Chartgenerator` is exposed as a static Java class, allowing you to generate an XChart object simply by passing a standard `java.util.Map` (which can be easily constructed from JSON or EDN data).
-
-#### Method Signature (Java)
+### 1. Generating a Chart from Java
 
 ```java
 import java.util.Map;
 import org.knowm.xchart.internal.chartpart.Chart;
-import interop.Chartgenerator; // Your compiled Clojure bridge
+import interop.Chartgenerator;
 
-public class JavaDemo {
-    public static Chart<?, ?> createChart(Map<String, Object> configMap) {
-        // The Clojure logic translates the declarative map into a Chart object
-        return Chartgenerator.generateChart(configMap); 
+public class ChartService {
+    public Chart<?, ?> buildChartFromConfig(Map<String, Object> standardJavaMap) {
+        // The Clojure layer normalizes the Java Map and builds the chart
+        return Chartgenerator.generateChart(standardJavaMap);
     }
 }
 ```
 
-### 2\. Exporting and Saving
-
-The bridge class also provides direct methods to export the resulting `Chart` object.
+### 2. Native Java Export Signatures
 
 | Java Method Signature | Description |
 | :--- | :--- |
-| `String generateSvgString(Chart chart)` | Returns the chart as a SVG string. |
-| `void saveToOutputStream(Chart chart, OutputStream os, String format)` | Saves the chart to an output stream. |
-| `void saveToFile(Chart chart, String filename, String format)` | Saves the chart to a file (e.g., `"png"`, `"svg"`). |
+| `static Chart generateChart(Map chartMap)` | Builds a Chart instance from a nested `java.util.Map`. |
+| `static String generateSvgString(Chart chart)` | Returns the chart as an SVG formatted XML string. |
+| `static void saveToFile(Chart chart, String filename, String format)` | Saves the chart to a file path (e.g., `"png"`, `"svg"`). |
+| `static void saveToOutputStream(Chart chart, OutputStream os, String format)` | Streams the graphic directly into a Java `OutputStream`. |
 
------
+### 3. The "Escape Hatch" Pattern
 
-### 3\. Advanced Customization in Java (The Escape Hatch)
-
-One of the major advantages of **xchart-clj** being a wrapper around a Java library is the ability to use the raw **XChart Java API** for advanced customizations *after* the chart has been configured by Clojure.
-
-This is particularly useful when:
-
-1.  A specific customization option is **not yet implemented** in the Clojure configuration map (refer to the 🛠️ To-Do List).
-2.  You need access to complex, low-level XChart features (e.g., custom tooltips, specific event handlers) that the wrapper does not expose.
-
-The `generateChart` method returns the base XChart object (`org.knowm.xchart.internal.chartpart.Chart`). You can cast this object to its specific type (e.g., `XYChart`, `CategoryChart`) to access its full Java API.
-
-#### Example: Modifying the Chart Styler in Java
-
-Assume you need to set the `AxisTitlePadding` value, but the corresponding key is missing in the current `xchart-clj` implementation.
+If a highly specific configuration method from the underlying XChart library is not yet mapped in the Clojure configuration spec, you can safely cast the returned object to its native Java class and use XChart's imperative API directly:
 
 ```java
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.internal.chartpart.Chart;
 import interop.Chartgenerator;
 
-// Assuming this map was created and passed from JSON/Configuration
-Map<String, Object> basicConfig = ... ; 
+Map<String, Object> config = getChartMap();
+Chart<?, ?> chart = Chartgenerator.generateChart(config);
 
-// 1. Generate the base chart using the Clojure configuration
-Chart<?, ?> rawChart = Chartgenerator.generateChart(basicConfig);
-
-// 2. Cast the chart object to its specific type (e.g., XYChart)
-//    and access the Styler via the Java API.
-if (rawChart instanceof XYChart) {
-    XYChart xyChart = (XYChart) rawChart;
-
-    // 3. Apply manual, low-level customization via XChart Java API
-    System.out.println("Applying manual Axis Title Padding via Java.");
-    xyChart.getStyler().setAxisTitlePadding(25); // Setzt den Abstand
+if (chart instanceof XYChart) {
+    XYChart xyChart = (XYChart) chart;
+    // Utilize native XChart features directly
+    xyChart.getStyler().setAxisTitlePadding(25);
 }
 
-// 4. Chart is now fully configured and can be exported
-Chartgenerator.saveToFile(rawChart, "customized_java_output.png", "png");
+Chartgenerator.saveToFile(chart, "hybrid_chart.png", "png");
 ```
 
-This pattern ensures that you always have an **"escape hatch"** to leverage the complete power of the underlying XChart library, even while primarily enjoying the simplicity of the Clojure map configuration.
-
------
+---
 
 ## 🛠️ To-Do List
 
-This section outlines planned features and missing implementations across various chart types and customization options:
-
-### 1\. General Functionality
-
-  * **Further Customization Options:** Implement remaining styling options available in the core XChart library that are not yet exposed via the configuration map (e.g., specific font family settings, padding, border visibility).
-  * **Documentation Expansion:** Provide detailed examples and documentation for all supported chart types beyond the basic XY chart (Category, Pie, Boxplot, etc.).
-
-### 2\. Chart Type Specific Options
-
-  * **Pie Chart Customization:** Add support for specific Pie chart styling options (e.g., setting start angle, inner/outer radius, slice separators).
-  * **Category Chart Options:** Expose more options for Category charts, such as bar width customization, and grouped/stacked bar options.
-  * **BoxPlot Calculation:** Ensure full support and clear documentation for all available `BoxStyler$BoxplotCalCulationMethod` options.
-  * **Dial/Radar/HeatMap Charts:** Integrate and document specific styling and configuration options unique to Dial, Radar, and Heat Map charts.
-
-### 3\. Series Customization
-
-  * **Complete Series Styling:** Add missing series-level styling options (e.g., marker size customization, data label visibility/formatting).
-
------
+* **Extended Chart-Type Formatting:** Map dedicated styling options for specific layouts like Pie charts (start angle, inner/outer radius tokens), Dial charts, and Radar properties.
+* **Category Chart Spacing:** Add configuration properties for precise bar widths and cluster padding setups inside category stylers.
+* **Interactive Tooltips & Zoom:** Build standard support keys for toggling native crosshairs, interactive zoom triggers, and cursor color configurations safely across all platforms.
 
 ## License
-
-Copyright 2025 Marcus Lindner
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Distributed under the MIT License. Copyright 2025 Marcus Lindner.

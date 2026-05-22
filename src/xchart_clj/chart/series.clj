@@ -37,7 +37,7 @@
                    "none"      SeriesLines/NONE
                    "solid"     SeriesLines/SOLID})
 
-(def series-marker {"cirlce"        SeriesMarkers/CIRCLE
+(def series-marker {"circle"        SeriesMarkers/CIRCLE ; Typo behoben
                     "cross"         SeriesMarkers/CROSS
                     "diamond"       SeriesMarkers/DIAMOND
                     "none"          SeriesMarkers/NONE
@@ -54,28 +54,29 @@
                                    (= "org.knowm.xchart.CategorySeries" (.getName (class series)))
                                    (.setChartCategorySeriesRenderStyle series
                                                                        (get-in series-render-styles ["org.knowm.xchart.style.CategoryStyler" (get series-map "render-style")]))
+
                                    (= "org.knowm.xchart.XYSeries" (.getName (class series)))
-                                   (.setChartXYSeriesRenderStyle series
-                                                                 (get-in series-render-styles ["org.knowm.xchart.style.XYStyler" (get series-map "render-style")]))
+                                   (.setXYSeriesRenderStyle series ; Korrigiert auf setXYSeriesRenderStyle
+                                                            (get-in series-render-styles ["org.knowm.xchart.style.XYStyler" (get series-map "render-style")]))
 
                                    (= "org.knowm.xchart.PieSeries" (.getName (class series)))
                                    (.setChartPieSeriesRenderStyle series
-                                                                 (get-in series-render-styles ["org.knowm.xchart.style.PieStyler" (get series-map "render-style")]))
+                                                                  (get-in series-render-styles ["org.knowm.xchart.style.PieStyler" (get series-map "render-style")]))
 
                                    (= "org.knowm.xchart.BubbleSeries" (.getName (class series)))
                                    (.setBubbleSeriesRenderStyle series
-                                                                 (get-in series-render-styles ["org.knowm.xchart.style.BubbleStyler" (get series-map "render-style")]))
+                                                                (get-in series-render-styles ["org.knowm.xchart.style.BubbleStyler" (get series-map "render-style")]))
 
                                    (= "org.knowm.xchart.OHLCSeries" (.getName (class series)))
                                    (.setOhlcSeriesRenderStyle series
-                                                                 (get-in series-render-styles ["org.knowm.xchart.style.OHLCStyler" (get series-map "render-style")]))
+                                                              (get-in series-render-styles ["org.knowm.xchart.style.OHLCStyler" (get series-map "render-style")]))
                                    )
                                  series)
              "label"           (fn [series series-map]
                                  (.setLabel series (get series-map "label"))
                                  series)
              "marker"          (fn [series series-map]
-                                 (.setMarker series ((get series-map "marker" "none") series-marker))
+                                 (.setMarker series (get series-marker (get series-map "marker" "none")))
                                  series)
              "y-axis-group"    (fn [series series-map]
                                  (.setYAxisGroup series (get series-map "y-axis-group"))
@@ -90,10 +91,10 @@
                                  (.setEnabled series (get series-map "enabled?" true))
                                  series)
              "line-width"      (fn [series series-map]
-                                 (.setLineWidth series (float (series-map "line-width" 1.0)))
+                                 (.setLineWidth series (float (get series-map "line-width" 1.0)))
                                  series)
              "line-style"      (fn [series series-map]
-                                 (.setLineStyle series (get series-lines (series-map "line-style" "solid")))
+                                 (.setLineStyle series (get series-lines (get series-map "line-style" "solid")))
                                  series)
              "line-color"      (fn [series series-map]
                                  (.setLineColor series (get-color (get series-map "line-color")))
@@ -113,5 +114,3 @@
       (.addSeries chart (get series-map "name") (map first (get series-map "data"))
                   (map second (get series-map "data"))))
     (vals (select-keys series (keys series-map)))))
-
-  
