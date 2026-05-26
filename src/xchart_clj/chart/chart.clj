@@ -202,6 +202,35 @@
                                                                (.setCursorLineWidth (get-in chart-map ["cursor-line-width"] 10.0)))
                                                            chart)
 
+                      "color-range"                      (fn [chart chart-map]
+                                                           (-> (.getStyler chart)
+                                                               (.setRangeColors (into-array java.awt.Color (map get-color (get-in chart-map ["color-range"] [])))))
+                                                           chart)
+
+
+                      "piecewise?"                       (fn [chart chart-map]
+                                                           (-> (.getStyler chart)
+                                                               (.setPiecewise (get-in chart-map ["piecewise?"] false)))
+                                                           chart)
+
+                      "piecewise-ranged?"                (fn [chart chart-map]
+                                                           (-> (.getStyler chart)
+                                                               (.setPiecewiseRanged (get-in chart-map ["piecewise-ranged?"] false)))
+                                                           chart)
+
+                      "show-value?"                      (fn [chart chart-map]
+                                                           (-> (.getStyler chart)
+                                                               (.setShowValue (get-in chart-map ["show-value?"] false)))
+                                                           chart)
+                      "heat-map-decimal-formatter"       (fn [chart chart-map]
+                                                           (when-let [formatter-fn (get-in chart-map ["heat-map-decimal-formatter"])]
+                                                             (-> (.getStyler chart)
+                                                                 (.setHeatMapDecimalValueFormatter
+                                                                   (reify java.util.function.Function
+                                                                     (apply [this x]
+                                                                       (formatter-fn x))))))
+                                                           chart)
+
                       })
 
 (defn adjust-chart

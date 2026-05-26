@@ -67,6 +67,10 @@
                                    (.setBubbleSeriesRenderStyle series
                                                                 (get-in series-render-styles ["org.knowm.xchart.style.BubbleStyler" (get series-map "render-style")]))
 
+                                   (= "org.knowm.xchart.HeatMapSeries" (.getName (class series)))
+                                   (.setBubbleSeriesRenderStyle series
+                                                                (get-in series-render-styles ["org.knowm.xchart.style.HeatMapStyler" (get series-map "render-style")]))
+
                                    (= "org.knowm.xchart.OHLCSeries" (.getName (class series)))
                                    (.setOhlcSeriesRenderStyle series
                                                               (get-in series-render-styles ["org.knowm.xchart.style.OHLCStyler" (get series-map "render-style")]))
@@ -109,8 +113,30 @@
 (defn add-series [chart series-map]
   (reduce
     #(%2 %1 series-map)
-    (if (instance? org.knowm.xchart.BoxChart chart)
+    (cond
+      (instance? org.knowm.xchart.BoxChart chart)
       (.addSeries chart (get series-map "name") (get series-map "data"))
-      (.addSeries chart (get series-map "name") (map first (get series-map "data"))
+
+      (instance? org.knowm.xchart.HeatMapChart chart)
+      (let [x-cats (get series-map "x-categories")
+            y-cats (get series-map "y-categories")
+            ;; Lookup-Tabellen zur Index-Ermittlung generieren: {"Montag" 0, "Dienstag" 1, ...}
+            x-index-map (zipmap x-cats (range))
+            y-index-map (zipmap y-cats (range))
+            ;; Textuelle Koordinaten in Indizes für das Number[][] Array übersetzen
+            numeric-data (map (fn [[x-val y-val heat]]
+                                (into-array Number [(get x-index-map x-val)
+                                           (get y-index-map y-val)
+                                           heat]))
+                              (get series-map "data"))]
+        (.addSeries chart
+                    (get series-map "name")
+                    (java.util.ArrayList. x-cats)
+                    (java.util.ArrayList. y-cats)
+                    (java.util.Arrays/asList (into-array numeric-data))))
+
+      :else
+      (.addSeries chart (get series-map "name")
+                  (map first (get series-map "data"))
                   (map second (get series-map "data"))))
     (vals (select-keys series (keys series-map)))))
